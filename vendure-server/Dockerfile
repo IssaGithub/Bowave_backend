@@ -1,9 +1,19 @@
-FROM node:20
+FROM node:20-alpine
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-COPY package.json ./
-COPY package-lock.json ./
-RUN npm install --production
+# Copy package files
+COPY package.json package-lock.json* ./
+RUN npm install
+
+# Copy source code
 COPY . .
+
+# Build the application
 RUN npm run build
+
+# Expose ports
+EXPOSE 3000 3001
+
+# Start Vendure server
+CMD ["npm", "run", "start"]
