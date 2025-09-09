@@ -1,10 +1,14 @@
-name: Deploy Vendure Backend
+name: Deploy Backend
 
 on:
   push:
     branches:
       - master
       - main
+
+permissions:
+  contents: read
+  packages: read
 
 jobs:
   deploy:
@@ -21,44 +25,30 @@ jobs:
           node-version: "20"
 
       - name: Install dependencies
-        run: npm install
+        run: yarn install
 
       - name: Build project
-        run: npm run build
+        run: yarn build
 
-      # Test SSH connection first
-      - name: Test SSH Connection
-        uses: appleboy/ssh-action@v0.1.8
+      - name: Copy files to VPS
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: "87.106.232.199"
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
-          port: 22
-          timeout: 30s
-          command_timeout: 10m
-          proxy_timeout: 30s
-          script: |
-            echo "SSH connection successful"
-            pwd
-            whoami
+          source: "."
+          target: "~/vendure-backend"
 
-      # Then deploy if SSH works
-      - name: Deploy to VPS
-        if: success()
-        uses: appleboy/ssh-action@v0.1.8
+      - name: Setup Environment
+        uses: appleboy/ssh-action@v0.1.7
         with:
           host: "87.106.232.199"
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
-          port: 22
-          command_timeout: 20m
-          proxy_timeout: 60s
-          debug: true
           script: |
-            # Navigate to backend directory
             cd ~/vendure-backend
 
-            # Create .env file if not exists
+            # Create .env file
             cat > .env << EOL
             APP_ENV=production
             PORT=3000
@@ -73,15 +63,27 @@ jobs:
             COOKIE_SECRET=${{ secrets.COOKIE_SECRET }}
             EOL
 
-            # Start/Restart services with Docker Compose
+      - name: Deploy with Docker
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: "87.106.232.199"
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/vendure-backend
             docker compose down || true
             docker compose pull || true
             docker compose up -d --build
 
-            # Wait for services to be up
+      - name: Check Deployment
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: "87.106.232.199"
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/vendure-backend
             echo "Waiting for services to start..."
             sleep 30
-
-            # Check service status
             docker compose ps
             docker compose logs --tail=100
