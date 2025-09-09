@@ -30,19 +30,39 @@ jobs:
       - name: Build project
         run: yarn build
 
+      - name: Test SSH Connection
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: "87.106.232.199"
+          port: "22" # Explizit als String
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          script: |
+            echo "Testing SSH connection..."
+            pwd
+            whoami
+            echo "SSH server status:"
+            sudo systemctl status sshd --no-pager || true
+            echo "Listening ports:"
+            sudo ss -tulpn | grep LISTEN
+
       - name: Copy files to VPS
+        if: success()
         uses: appleboy/scp-action@v0.1.7
         with:
           host: "87.106.232.199"
+          port: "22" # Explizit als String
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           source: "."
           target: "~/vendure-backend"
 
       - name: Setup Environment
+        if: success()
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: "87.106.232.199"
+          port: "22" # Explizit als String
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           script: |
@@ -64,9 +84,11 @@ jobs:
             EOL
 
       - name: Deploy with Docker
+        if: success()
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: "87.106.232.199"
+          port: "22" # Explizit als String
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           script: |
@@ -76,9 +98,11 @@ jobs:
             docker compose up -d --build
 
       - name: Check Deployment
+        if: success()
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: "87.106.232.199"
+          port: "22" # Explizit als String
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           script: |
