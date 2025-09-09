@@ -1,6 +1,6 @@
 # Vendure Backend
 
-## Deployment Setup
+### Deployment Setup
 
 #### GitHub Secrets Required
 
