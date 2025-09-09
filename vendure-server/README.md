@@ -2,7 +2,7 @@
 
 ## Deployment Setup
 
-### GitHub Secrets Required
+#### GitHub Secrets Required
 
 The following secrets need to be set in your GitHub repository settings:
 
