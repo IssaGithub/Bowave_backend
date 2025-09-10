@@ -33,25 +33,21 @@ jobs:
       - name: Copy files to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.VPS_HOST }}
+          host: "87.106.232.199"
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
-          port: 22
           source: "."
           target: "~/vendure-backend"
-          debug: true
+          strip_components: 0
+          overwrite: true
+          rm: false
 
       - name: Test SSH Connection
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: ${{ secrets.VPS_HOST }}
-          port: 22
+          host: "87.106.232.199"
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
-          debug: true
-          envs: GITHUB_SHA
-          cipher: aes128-ctr # Expliziter Cipher
-          use_insecure_cipher: false
           script: |
             echo "=== Testing SSH connection ==="
             echo "Current user: $(whoami)"
@@ -78,14 +74,9 @@ jobs:
         if: success()
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: ${{ secrets.VPS_HOST }}
-          port: 22
+          host: "87.106.232.199"
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
-          debug: true
-          envs: GITHUB_SHA
-          cipher: aes128-ctr # Expliziter Cipher
-          use_insecure_cipher: false
           script: |
             cd ~/vendure-backend
 
@@ -108,14 +99,9 @@ jobs:
         if: success()
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: ${{ secrets.VPS_HOST }}
-          port: 22
+          host: "87.106.232.199"
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
-          debug: true
-          envs: GITHUB_SHA
-          cipher: aes128-ctr # Expliziter Cipher
-          use_insecure_cipher: false
           script: |
             cd ~/vendure-backend
             docker compose down || true
@@ -126,14 +112,9 @@ jobs:
         if: success()
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: ${{ secrets.VPS_HOST }}
-          port: 22
+          host: "87.106.232.199"
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
-          debug: true
-          envs: GITHUB_SHA
-          cipher: aes128-ctr # Expliziter Cipher
-          use_insecure_cipher: false
           script: |
             cd ~/vendure-backend
             echo "Waiting for services to start..."
