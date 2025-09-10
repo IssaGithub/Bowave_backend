@@ -36,14 +36,16 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          port: 22
           source: "."
           target: "~/vendure-backend"
+          debug: true
 
       - name: Test SSH Connection
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
-          ssh_port: "22" # Alternative Parameter
+          port: 22
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           debug: true
@@ -51,20 +53,33 @@ jobs:
           cipher: aes128-ctr # Expliziter Cipher
           use_insecure_cipher: false
           script: |
-            echo "Testing SSH connection..."
-            pwd
-            whoami
-            echo "SSH server status:"
+            echo "=== Testing SSH connection ==="
+            echo "Current user: $(whoami)"
+            echo "Current directory: $(pwd)"
+            echo "Host: $(hostname)"
+            echo "Date: $(date)"
+
+            echo "=== SSH Server Status ==="
             sudo systemctl status sshd --no-pager || true
-            echo "Listening ports:"
+
+            echo "=== SSH Config ==="
+            sudo grep -v '^#' /etc/ssh/sshd_config || true
+
+            echo "=== Listening Ports ==="
             sudo ss -tulpn | grep LISTEN
+
+            echo "=== Network Info ==="
+            ip addr show
+
+            echo "=== Route Info ==="
+            ip route show
 
       - name: Setup Environment
         if: success()
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
-          ssh_port: "22" # Alternative Parameter
+          port: 22
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           debug: true
@@ -94,7 +109,7 @@ jobs:
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
-          ssh_port: "22" # Alternative Parameter
+          port: 22
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           debug: true
@@ -112,7 +127,7 @@ jobs:
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
-          ssh_port: "22" # Alternative Parameter
+          port: 22
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           debug: true
