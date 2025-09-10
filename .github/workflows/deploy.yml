@@ -31,7 +31,7 @@ jobs:
         run: yarn build
 
       - name: Copy files to VPS
-        uses: appleboy/scp-action@v0.1.8
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
@@ -40,7 +40,7 @@ jobs:
           target: "~/vendure-backend"
 
       - name: Test SSH Connection
-        uses: appleboy/ssh-action@v0.1.8
+        uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
           port: "22" # Explizit als String
@@ -58,7 +58,7 @@ jobs:
 
       - name: Setup Environment
         if: success()
-        uses: appleboy/ssh-action@v0.1.8
+        uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
           port: "22" # Explizit als String
@@ -84,7 +84,7 @@ jobs:
 
       - name: Deploy with Docker
         if: success()
-        uses: appleboy/ssh-action@v0.1.8
+        uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
           port: "22" # Explizit als String
@@ -98,7 +98,7 @@ jobs:
 
       - name: Check Deployment
         if: success()
-        uses: appleboy/ssh-action@v0.1.8
+        uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
           port: "22" # Explizit als String
