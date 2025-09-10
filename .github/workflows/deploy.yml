@@ -43,10 +43,13 @@ jobs:
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
-          port: "22" # Explizit als String
+          ssh_port: "22" # Alternative Parameter
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           debug: true
+          envs: GITHUB_SHA
+          cipher: aes128-ctr # Expliziter Cipher
+          use_insecure_cipher: false
           script: |
             echo "Testing SSH connection..."
             pwd
@@ -61,9 +64,13 @@ jobs:
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
-          port: "22" # Explizit als String
+          ssh_port: "22" # Alternative Parameter
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          debug: true
+          envs: GITHUB_SHA
+          cipher: aes128-ctr # Expliziter Cipher
+          use_insecure_cipher: false
           script: |
             cd ~/vendure-backend
 
@@ -87,9 +94,13 @@ jobs:
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
-          port: "22" # Explizit als String
+          ssh_port: "22" # Alternative Parameter
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          debug: true
+          envs: GITHUB_SHA
+          cipher: aes128-ctr # Expliziter Cipher
+          use_insecure_cipher: false
           script: |
             cd ~/vendure-backend
             docker compose down || true
@@ -101,9 +112,13 @@ jobs:
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
-          port: "22" # Explizit als String
+          ssh_port: "22" # Alternative Parameter
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          debug: true
+          envs: GITHUB_SHA
+          cipher: aes128-ctr # Expliziter Cipher
+          use_insecure_cipher: false
           script: |
             cd ~/vendure-backend
             echo "Waiting for services to start..."
