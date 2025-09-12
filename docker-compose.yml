@@ -4,43 +4,53 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - 3000:3000
-      - 3001:3001
+    expose:
+      - 3000
+      - 3001
     command: ["yarn", "start:server"]
-    volumes:
-      - /usr/src/app
     environment:
       DB_HOST: database
       DB_PORT: 5432
       DB_NAME: vendure
       DB_USERNAME: vendure
       DB_PASSWORD: vendure
+    depends_on:
+      - database
 
   worker:
     build:
       context: .
       dockerfile: Dockerfile
     command: ["yarn", "start:worker"]
-    volumes:
-      - /usr/src/app
     environment:
       DB_HOST: database
       DB_PORT: 5432
       DB_NAME: vendure
       DB_USERNAME: vendure
       DB_PASSWORD: vendure
+    depends_on:
+      - database
 
   database:
     image: postgres:16-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - 5432:5432
     environment:
       POSTGRES_PASSWORD: vendure
       POSTGRES_USER: vendure
       POSTGRES_DB: vendure
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - server
+      - worker
 
 volumes:
   postgres_data:
