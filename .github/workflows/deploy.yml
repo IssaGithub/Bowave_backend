@@ -33,14 +33,14 @@ jobs:
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Initialize Backend Directory
+      - name: Setup Backend Directory
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           script: |
-            mkdir -p ~/vendure-backend
+            cd ~ && mkdir -p vendure-backend
 
       - name: Copy files to VPS
         if: success()

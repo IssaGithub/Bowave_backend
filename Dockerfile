@@ -3,14 +3,14 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Copy package files
-COPY package.json package-lock.json* ./
-RUN npm install
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
 
 # Copy source code
 COPY . .
 
 # Build the application
-RUN npm run build
+RUN yarn build
 
 # Expose ports
 EXPOSE 3000 3001
@@ -19,4 +19,4 @@ EXPOSE 3000 3001
 ENV NODE_ENV=production
 
 # Start Vendure server
-CMD ["npm", "run", "start"]
+CMD ["yarn", "start"]
