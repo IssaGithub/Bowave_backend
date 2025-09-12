@@ -33,6 +33,17 @@ jobs:
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
+      - name: Setup Backend Directory
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          script: |
+            mkdir -p ~/vendure-backend
+            mkdir -p ~/vendure-backend/nginx/conf.d
+            mkdir -p ~/vendure-backend/nginx/ssl
+
       - name: Copy files to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -41,15 +52,6 @@ jobs:
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           source: "."
           target: "~/vendure-backend"
-
-      - name: Setup Backend Directory
-        uses: appleboy/ssh-action@v0.1.8
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
-          script: |
-            cd ~/vendure-backend
 
       - name: Setup Environment
         uses: appleboy/ssh-action@v0.1.8
