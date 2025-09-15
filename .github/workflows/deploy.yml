@@ -35,25 +35,25 @@ jobs:
 
       - name: Debug VPS Host
         run: |
-          echo "VPS_HOST value: ${{ secrets.HOST }}"
+          echo "VPS_HOST value: ${{ secrets.VPS_HOST }}"
           echo "VPS_HOST length: ${#VPS_HOST}"
 
       - name: Test Connection
         uses: appleboy/ssh-action@v0.1.8
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            echo "Testing connection to host: ${{ secrets.HOST }}"
+            echo "Testing connection to host: ${{ secrets.VPS_HOST }}"
             echo "Current host from inside: $HOSTNAME"
             whoami
 
       - name: Copy files to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           source: "."
@@ -62,7 +62,7 @@ jobs:
       - name: Setup Environment
         uses: appleboy/ssh-action@v0.1.8
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           port: 22
@@ -86,7 +86,7 @@ jobs:
       - name: Deploy with Docker
         uses: appleboy/ssh-action@v0.1.8
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           script: |
@@ -98,7 +98,7 @@ jobs:
       - name: Check Deployment
         uses: appleboy/ssh-action@v0.1.8
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           script: |
