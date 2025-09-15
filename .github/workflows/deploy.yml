@@ -44,7 +44,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
-          port: "22"
+          port: 22
           script: |
             echo "Testing connection to host: ${{ secrets.HOST }}"
             echo "Current host from inside: $HOSTNAME"
